@@ -7,6 +7,9 @@ owner = "LiteObject"
 repo = "changelog-with-ai"
 token = os.environ.get("GITHUB_TOKEN")
 
+if not token:
+  raise ValueError("GITHUB_TOKEN environment variable is not set")
+
 def get_commit_messages(pull_request_id) -> list[str]:
         
     # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-commits-on-a-pull-request
