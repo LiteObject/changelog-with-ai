@@ -14,3 +14,4 @@ In summary, a changelog provides a detailed account of all changes made to a sof
 ## Links:
 - [Best Changelogs](https://changelog.md/links)
 - [GitHub: Automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes)
+- [GitHub REST API documentation](https://docs.github.com/en/rest?apiVersion=2022-11-28)

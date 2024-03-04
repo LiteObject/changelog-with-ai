@@ -14,9 +14,13 @@ def get_commit_messages(pull_request_id):
     Returns:
         A list of commit messages.
     """
-    url = f"https://api.github.com/repos/{pull_request_id}/commits"
+    owner = "LiteObject"
+    repo_name = "changelog-with-ai"
+    token = os.environ.get("GITHUB_TOKEN")
+    # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-commits-on-a-pull-request
+    url = f"https://api.github.com/repos/{owner}/{repo_name}/pulls/{pull_request_id}/commits"
     headers = {
-        "Authorization": f"Bearer {os.environ.get("GITHUB_TOKEN")}",
+        "Authorization": f"Bearer {token}",
         "Accept": "application/json"
     }
     response = requests.get(url, headers=headers)
@@ -24,12 +28,13 @@ def get_commit_messages(pull_request_id):
 
     commit_messages = []
     for commit in commits:
+        # print(commit)
         commit_messages.append(commit["commit"]["message"])
 
     return commit_messages
 
 if __name__ == "__main__":
-    pull_request_id = "YOUR_PULL_REQUEST_ID"
+    pull_request_id = 1 #"YOUR_PULL_REQUEST_ID"
     commit_messages = get_commit_messages(pull_request_id)
     print(commit_messages)
     
