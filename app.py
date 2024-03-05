@@ -1,132 +1,44 @@
 import requests
+import git_client as git
+import json
+from pprint import pprint
 import os
 from dotenv import load_dotenv
-load_dotenv() 
-
-owner = "LiteObject"
-repo = "changelog-with-ai"
-token = os.environ.get("GITHUB_TOKEN")
-
-if not token:
-  raise ValueError("GITHUB_TOKEN environment variable is not set")
-
-def get_commit_messages(pull_request_id) -> list[str]:
-        
-    # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-commits-on-a-pull-request
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_request_id}/commits"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-    response = requests.get(url, headers=headers)
-    commits = response.json()
-
-    commit_messages = []
-    for commit in commits:
-        # print(commit)
-        commit_messages.append(commit["commit"]["message"])
-
-    return commit_messages
-
-def read_pull_request_description(github_api_url: str) -> str:
-   
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-     
-    response = requests.get(github_api_url, headers=headers)
-
-    data = response.json()
-    
-    if response.status_code == 200:        
-        description = data["body"]
-    else:
-        print(f"Status Code: {response.status_code}, Error: {data}")
-
-    return description
-
-def get_pull_request_changes(github_api_url: str) -> str:
-
-    if not github_api_url.endswith("/files"):
-        github_api_url += "/files"
-
-   # GET /repos/{owner}/{repo}/pulls/{pull_number}/files    
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-
-    response = requests.get(github_api_url, headers=headers)
-
-    data = response.json()
-
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     for file in data:
-    #         # print(file)
-    #         # filename = file["filename"]
-    #         # status = file["status"]
-    #         # Access and process the "patch" property for detailed changes
-    #         # print(f"Filename: {filename}")
-    #         # print(f"Status: {status}")
-    #         # ... (process patch data)
-    # else:
-    #     print(f"Error: {response.status_code}")
-
-    return data
-
-
-def convert_github_pr_url_to_api(url):
-
-  # Check if the URL is valid and has the expected format
-  if not url.startswith("https://github.com/") or "/pull/" not in url:
-    return None
-
-  # Split the URL into parts
-  parts = url.split("/")
-
-  # Extract owner, repo, and pull number
-  owner = parts[3]
-  repo = parts[4]
-  pull_number = parts[6]
-
-  # Construct the API URL
-  api_url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}"
-
-  return api_url
+load_dotenv()
 
 if __name__ == "__main__":
-    pull_request_id = 3
 
-    # Example usage
-    github_url = "https://github.com/LiteObject/changelog-with-ai/pull/2"
-    api_url = convert_github_pr_url_to_api(github_url)
+    token = os.environ.get("GITHUB_TOKEN")
 
-    if api_url:
-        print(f"Converted\n\"{github_url}\" to:\n\"{api_url}\"")
-    else:
-        print("Invalid URL format")
+    if not token:
+        raise ValueError("GITHUB_TOKEN environment variable is not set")
 
-    print("\n")
-    pr_desc = read_pull_request_description(api_url)
-    print(pr_desc)
+    owner = "LiteObject"
+    repo = "changelog-with-ai"
+    pull_number = 3
 
-    print("\n")
-    commit_messages = get_commit_messages(pull_request_id)
-    print(commit_messages)
+    try:
+        # Example usage
+        # github_url = "https://github.com/LiteObject/changelog-with-ai/pull/2"
+        # api_url = .convert_github_pr_url_to_api(github_url)
 
-    files = get_pull_request_changes(api_url)
-    print(files)
-    
-    # Example output:
-    # ['Update README.md', 'Add more details', 'Fix bug']
-    
-    # To test it, you can replace YOUR_PULL_REQUEST_ID with a valid pull request ID.
-    # For example, if the pull request ID is 123, you can replace it with "YOUR_PULL_REQUEST_ID/123".
-    # This will retrieve the commit messages for the pull request with ID 123.
-    # The token you use to access GitHub must be provided in the Authorization header.
-    # You can replace "YOUR_GITHUB_TOKEN" with your actual GitHub token.
-    # The Accept header specifies the format of the response.
-    # In this case, it is set to "application/json" to indicate that the response is in JSON format.
-    # The response is a list of dictionaries, where each dictionary represents a commit.
+        # if api_url:
+        #     print(f"Converted\n\"{github_url}\" to:\n\"{api_url}\"")
+        # else:
+        #     print("Invalid URL format")
+
+        print("PR Description:".upper(), "\n")
+        pr_desc = git.read_pull_request_description(token, owner, repo, pull_number)
+        print(pr_desc, "\n")
+
+        print("Commit Messages:".upper(), "\n")
+        commit_messages = git.get_commit_messages(token, owner, repo, pull_number)
+        print(commit_messages, "\n")
+
+        print("Changes:".upper(), "\n")
+        changes = git.get_pull_request_changes(token, owner, repo, pull_number)
+        print(changes)
+        # print(json.dumps(changes, indent=4))
+        # pprint(changes, indent=4)
+    except Exception as e:
+        print(f"Error: {e}")
