@@ -46,6 +46,37 @@ def read_pull_request_description(github_api_url: str) -> str:
 
     return description
 
+def get_pull_request_changes(github_api_url: str) -> str:
+
+    if not github_api_url.endswith("/files"):
+        github_api_url += "/files"
+
+   # GET /repos/{owner}/{repo}/pulls/{pull_number}/files    
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json"
+    }
+
+    response = requests.get(github_api_url, headers=headers)
+
+    data = response.json()
+
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     for file in data:
+    #         # print(file)
+    #         # filename = file["filename"]
+    #         # status = file["status"]
+    #         # Access and process the "patch" property for detailed changes
+    #         # print(f"Filename: {filename}")
+    #         # print(f"Status: {status}")
+    #         # ... (process patch data)
+    # else:
+    #     print(f"Error: {response.status_code}")
+
+    return data
+
+
 def convert_github_pr_url_to_api(url):
 
   # Check if the URL is valid and has the expected format
@@ -65,9 +96,8 @@ def convert_github_pr_url_to_api(url):
 
   return api_url
 
-
 if __name__ == "__main__":
-    pull_request_id = 1 #"YOUR_PULL_REQUEST_ID"
+    pull_request_id = 3
 
     # Example usage
     github_url = "https://github.com/LiteObject/changelog-with-ai/pull/2"
@@ -78,11 +108,16 @@ if __name__ == "__main__":
     else:
         print("Invalid URL format")
 
+    print("\n")
     pr_desc = read_pull_request_description(api_url)
     print(pr_desc)
 
-    # commit_messages = get_commit_messages(pull_request_id)
-    # print(commit_messages)
+    print("\n")
+    commit_messages = get_commit_messages(pull_request_id)
+    print(commit_messages)
+
+    files = get_pull_request_changes(api_url)
+    print(files)
     
     # Example output:
     # ['Update README.md', 'Add more details', 'Fix bug']
