@@ -27,9 +27,10 @@ def read_pull_request_description(token: str, owner: str, repo: str, pull_number
      
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}"
     response = requests.get(url, headers=headers)
-
     data = response.json()
     
+    description = ""
+
     if response.status_code == 200:        
         description = data["body"]
     else:
@@ -48,20 +49,11 @@ def get_pull_request_changes(token: str, owner: str, repo: str, pull_number: int
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/files"
     response = requests.get(url, headers=headers)
 
-    data = response.json()
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}")
+        return None
 
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     for file in data:
-    #         # print(file)
-    #         # filename = file["filename"]
-    #         # status = file["status"]
-    #         # Access and process the "patch" property for detailed changes
-    #         # print(f"Filename: {filename}")
-    #         # print(f"Status: {status}")
-    #         # ... (process patch data)
-    # else:
-    #     print(f"Error: {response.status_code}")
+    data = response.json()    
 
     return data
 
