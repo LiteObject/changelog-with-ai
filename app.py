@@ -44,9 +44,10 @@ if __name__ == "__main__":
         # print(file_changes)
 
         pr_data = git.get_pull_request_data(token, owner, repo, pull_number)
-        print(pr_data)
+        # print(pr_data)
 
-        ai.create_changelog(pr_data)
+        changelog_content = ai.create_changelog(pr_data)
+        print(changelog_content)
 
         # print("Changes:".upper(), "\n")
         # files = git.get_pull_request_changes(token, owner, repo, pull_number)
