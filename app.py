@@ -1,12 +1,14 @@
 import requests
 import git_client as git
+import ai_assistant as ai
 import json
 from pprint import pprint
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
 
     token = os.environ.get("GITHUB_TOKEN")
 
@@ -15,7 +17,7 @@ if __name__ == "__main__":
 
     owner = "LiteObject"
     repo = "changelog-with-ai"
-    pull_number = 3
+    pull_number = 4
 
     try:
         # Example usage
@@ -27,18 +29,31 @@ if __name__ == "__main__":
         # else:
         #     print("Invalid URL format")
 
-        print("PR Description:".upper(), "\n")
-        pr_desc = git.read_pull_request_description(token, owner, repo, pull_number)
-        print(pr_desc, "\n")
+        # print("PR Description:".upper(), "\n")
+        # pr_desc = git.read_pull_request_description(token, owner, repo, pull_number)
+        # print(pr_desc, "\n")
 
-        print("Commit Messages:".upper(), "\n")
-        commit_messages = git.get_commit_messages(token, owner, repo, pull_number)
-        print(commit_messages, "\n")
+        # print("Commit Messages:".upper(), "\n")
+        # commit_messages = git.get_commit_messages(token, owner, repo, pull_number)
+        # print(commit_messages, "\n")
 
-        print("Changes:".upper(), "\n")
-        changes = git.get_pull_request_changes(token, owner, repo, pull_number)
-        print(changes)
-        # print(json.dumps(changes, indent=4))
-        # pprint(changes, indent=4)
+        # commits = git.get_commits_for_day(token, owner, repo, "2024-03-06", 50)
+        # print(commits, "\n\n\n")
+
+        # file_changes = git.get_file_changes_for_day(token, owner, repo, '2024-02-05', 100)
+        # print(file_changes)
+
+        pr_data = git.get_pull_request_data(token, owner, repo, pull_number)
+        print(pr_data)
+
+        ai.create_changelog(pr_data)
+
+        # print("Changes:".upper(), "\n")
+        # files = git.get_pull_request_changes(token, owner, repo, pull_number)
+
+        # for file in files:
+        #     print(file, "\n")
+        #     # print(json.dumps(file))
+        #     # pprint(file, indent=4)
     except Exception as e:
         print(f"Error: {e}")
