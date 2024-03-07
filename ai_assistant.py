@@ -23,10 +23,4 @@ def create_changelog(pr_data: str) -> str:
 
     # Extract the generated CHANGELOG.md content
     changelog_content = response.choices[0].message.content
-
-    # Save the CHANGELOG.md file
-    with open("CHANGELOG.md", "w", encoding="utf-8") as file:
-        file.write(changelog_content)
-
-    print("CHANGELOG.md file created successfully!")
     return changelog_content

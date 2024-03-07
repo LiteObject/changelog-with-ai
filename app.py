@@ -1,7 +1,8 @@
 import requests
 import git_client as git
 import ai_assistant as ai
-import json
+import file_helper as file_helper
+import datetime
 from pprint import pprint
 from openai import OpenAI
 import os
@@ -17,44 +18,16 @@ if __name__ == "__main__":
 
     owner = "LiteObject"
     repo = "changelog-with-ai"
-    pull_number = 4
+    pull_number = 5
 
-    try:
-        # Example usage
-        # github_url = "https://github.com/LiteObject/changelog-with-ai/pull/2"
-        # api_url = .convert_github_pr_url_to_api(github_url)
-
-        # if api_url:
-        #     print(f"Converted\n\"{github_url}\" to:\n\"{api_url}\"")
-        # else:
-        #     print("Invalid URL format")
-
-        # print("PR Description:".upper(), "\n")
-        # pr_desc = git.read_pull_request_description(token, owner, repo, pull_number)
-        # print(pr_desc, "\n")
-
-        # print("Commit Messages:".upper(), "\n")
-        # commit_messages = git.get_commit_messages(token, owner, repo, pull_number)
-        # print(commit_messages, "\n")
-
-        # commits = git.get_commits_for_day(token, owner, repo, "2024-03-06", 50)
-        # print(commits, "\n\n\n")
-
-        # file_changes = git.get_file_changes_for_day(token, owner, repo, '2024-02-05', 100)
-        # print(file_changes)
-
-        pr_data = git.get_pull_request_data(token, owner, repo, pull_number)
-        # print(pr_data)
-
+    try:       
+        pr_data = git.get_pull_request_data(token, owner, repo, pull_number)        
         changelog_content = ai.create_changelog(pr_data)
-        print(changelog_content)
+        
+        file_name = f"CHANGELOG_PR{pull_number}_{datetime.datetime.now().timestamp()}.md"
+        file_helper.create_file(file_name, changelog_content)
 
-        # print("Changes:".upper(), "\n")
-        # files = git.get_pull_request_changes(token, owner, repo, pull_number)
+        # file_helper.create_file(file_name, "changelog_content")
 
-        # for file in files:
-        #     print(file, "\n")
-        #     # print(json.dumps(file))
-        #     # pprint(file, indent=4)
     except Exception as e:
         print(f"Error: {e}")
