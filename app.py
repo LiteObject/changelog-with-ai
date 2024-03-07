@@ -1,12 +1,15 @@
 import requests
 import git_client as git
-import json
+import ai_assistant as ai
+import file_helper as file_helper
+import datetime
 from pprint import pprint
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
 
     token = os.environ.get("GITHUB_TOKEN")
 
@@ -15,30 +18,16 @@ if __name__ == "__main__":
 
     owner = "LiteObject"
     repo = "changelog-with-ai"
-    pull_number = 3
+    pull_number = 5
 
-    try:
-        # Example usage
-        # github_url = "https://github.com/LiteObject/changelog-with-ai/pull/2"
-        # api_url = .convert_github_pr_url_to_api(github_url)
+    try:       
+        pr_data = git.get_pull_request_data(token, owner, repo, pull_number)        
+        changelog_content = ai.create_changelog(pr_data)
+        
+        file_name = f"CHANGELOG_PR{pull_number}_{datetime.datetime.now().timestamp()}.md"
+        file_helper.create_file(file_name, changelog_content)
 
-        # if api_url:
-        #     print(f"Converted\n\"{github_url}\" to:\n\"{api_url}\"")
-        # else:
-        #     print("Invalid URL format")
+        # file_helper.create_file(file_name, "changelog_content")
 
-        print("PR Description:".upper(), "\n")
-        pr_desc = git.read_pull_request_description(token, owner, repo, pull_number)
-        print(pr_desc, "\n")
-
-        print("Commit Messages:".upper(), "\n")
-        commit_messages = git.get_commit_messages(token, owner, repo, pull_number)
-        print(commit_messages, "\n")
-
-        print("Changes:".upper(), "\n")
-        changes = git.get_pull_request_changes(token, owner, repo, pull_number)
-        print(changes)
-        # print(json.dumps(changes, indent=4))
-        # pprint(changes, indent=4)
     except Exception as e:
         print(f"Error: {e}")
