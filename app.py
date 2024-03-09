@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     owner = "LiteObject"
     repo = "changelog-with-ai"
-    pull_number = 5
+    pull_number = 6
 
     try:       
         pr_data = git.get_pull_request_data(token, owner, repo, pull_number)        
