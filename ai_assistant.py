@@ -17,7 +17,7 @@ def create_changelog(pr_data: str) -> str:
         model="gpt-4-turbo-preview",
         messages=[
             {"role": "system", "content": "You are a helpful assistant designed to write software changelog."},
-            {"role": "user", "content": f"Create a CHANGELOG.md file based on the following pull request data:\n\n{pr_data}"}
+            {"role": "user", "content": f"Create a CHANGELOG.md file based on the following pull request data and group them by the folders in the root. \n\n{pr_data}"}
         ]
     )
 
